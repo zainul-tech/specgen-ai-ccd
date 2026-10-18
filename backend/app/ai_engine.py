@@ -5,8 +5,10 @@ Uses Google Gemini as the LLM provider.
 """
 import os
 import json
-from dotenv import load_dotenv
-from google import genai
+try:
+    from google import genai
+except ImportError:
+    genai = None
 
 load_dotenv()
 
