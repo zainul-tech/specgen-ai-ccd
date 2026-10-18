@@ -23,8 +23,8 @@ spec:
     spec:
       containers:
       - name: specgen-ai
-        # Set to your Docker Hub repository
-        image: zainul-tech/specgen-ai:latest
+        # Docker Hub repository
+        image: zainuls/specgen-ai:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 8000
