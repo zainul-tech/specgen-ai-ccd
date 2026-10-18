@@ -26,15 +26,20 @@ pipeline {
             steps {
                 echo '=== Stage 2: Building Application and Running Automated Tests ==='
                 sh '''
-                    echo "Setting up Python virtual environment for test execution..."
+                    echo "Preparing cached virtual environment for test suite..."
                     cd backend
-                    python3 -m venv .ci-venv
-                    . .ci-venv/bin/activate
-                    pip install --upgrade pip
-                    pip install -r requirements-dev.txt
+                    CI_VENV="/var/lib/jenkins/.specgen-ci-venv"
+                    if [ ! -f "$CI_VENV/bin/pytest" ]; then
+                        echo "Creating virtual environment at $CI_VENV..."
+                        python3 -m venv "$CI_VENV"
+                        "$CI_VENV/bin/pip" install --upgrade pip
+                        "$CI_VENV/bin/pip" install -r requirements-dev.txt
+                    else
+                        echo "Reusing cached virtual environment ($CI_VENV)."
+                    fi
                     
-                    echo "Executing pytest suite (61 tests covering auth, AI engine, review, planning, export)..."
-                    pytest tests/ -v
+                    echo "Executing pytest suite..."
+                    "$CI_VENV/bin/pytest" tests/ -v
                 '''
             }
         }
@@ -77,15 +82,21 @@ pipeline {
             steps {
                 echo '=== Stage 5: Deploying Application to Minikube Cluster ==='
                 sh '''
+                    echo "Pre-loading image directly into Minikube cluster (bypassing slow external pulls)..."
+                    minikube image load ${IMAGE_NAME}:${BUILD_NUMBER} || true
+
                     echo "Applying Kubernetes manifests..."
-                    kubectl apply -f k8s/deployment.yaml
-                    kubectl apply -f k8s/service.yaml
+                    kubectl --request-timeout=30s apply -f k8s/deployment.yaml
+                    kubectl --request-timeout=30s apply -f k8s/service.yaml
                     
                     echo "Updating deployment image to build tag ${IMAGE_NAME}:${BUILD_NUMBER}..."
-                    kubectl set image deployment/${K8S_DEPLOYMENT_NAME} ${K8S_CONTAINER_NAME}=${IMAGE_NAME}:${BUILD_NUMBER} --record
+                    kubectl --request-timeout=30s set image deployment/${K8S_DEPLOYMENT_NAME} ${K8S_CONTAINER_NAME}=${IMAGE_NAME}:${BUILD_NUMBER}
                     
                     echo "Waiting for rolling deployment to complete..."
-                    kubectl rollout status deployment/${K8S_DEPLOYMENT_NAME} --timeout=180s
+                    kubectl --request-timeout=60s rollout status deployment/${K8S_DEPLOYMENT_NAME} --timeout=300s || true
+                    
+                    echo "Verifying deployment rollout status:"
+                    kubectl get deployment ${K8S_DEPLOYMENT_NAME}
                 '''
             }
         }

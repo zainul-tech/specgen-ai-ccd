@@ -25,7 +25,7 @@ spec:
       - name: specgen-ai
         # Docker Hub repository
         image: zainuls/specgen-ai:latest
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8000
           name: http
@@ -36,11 +36,11 @@ spec:
           value: "cca2-production-secret-specgen-ai-auth"
         resources:
           requests:
-            cpu: "100m"
-            memory: "128Mi"
+            cpu: "50m"
+            memory: "64Mi"
           limits:
-            cpu: "500m"
-            memory: "512Mi"
+            cpu: "300m"
+            memory: "384Mi"
         livenessProbe:
           httpGet:
             path: /health
