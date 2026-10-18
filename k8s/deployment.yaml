@@ -23,8 +23,8 @@ spec:
     spec:
       containers:
       - name: specgen-ai
-        # Replace YOUR_DOCKERHUB_USERNAME with your actual Docker Hub username
-        image: zainu/specgen-ai:latest
+        # Set to your Docker Hub repository
+        image: zainul-tech/specgen-ai:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 8000

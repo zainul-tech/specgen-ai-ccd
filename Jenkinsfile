@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        // Change to your Docker Hub username
-        DOCKER_HUB_USER       = 'zainu'
+        // Set your Docker Hub username
+        DOCKER_HUB_USER       = 'zainul-tech'
         IMAGE_NAME            = "${DOCKER_HUB_USER}/specgen-ai"
         DOCKER_CREDENTIALS_ID = 'dockerhub-credentials'
         K8S_DEPLOYMENT_NAME   = 'specgen-ai'
