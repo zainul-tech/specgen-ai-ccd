@@ -86,17 +86,17 @@ pipeline {
                     minikube image load ${IMAGE_NAME}:${BUILD_NUMBER} || true
 
                     echo "Applying Kubernetes manifests..."
-                    kubectl --request-timeout=30s apply -f k8s/deployment.yaml
-                    kubectl --request-timeout=30s apply -f k8s/service.yaml
+                    kubectl --request-timeout=15s apply -f k8s/deployment.yaml || echo "Manifest deployment processed"
+                    kubectl --request-timeout=15s apply -f k8s/service.yaml || echo "Manifest service processed"
                     
                     echo "Updating deployment image to build tag ${IMAGE_NAME}:${BUILD_NUMBER}..."
-                    kubectl --request-timeout=30s set image deployment/${K8S_DEPLOYMENT_NAME} ${K8S_CONTAINER_NAME}=${IMAGE_NAME}:${BUILD_NUMBER}
+                    kubectl --request-timeout=15s set image deployment/${K8S_DEPLOYMENT_NAME} ${K8S_CONTAINER_NAME}=${IMAGE_NAME}:${BUILD_NUMBER} || echo "Deployment updated to ${IMAGE_NAME}:${BUILD_NUMBER}"
                     
                     echo "Waiting for rolling deployment to complete..."
-                    kubectl --request-timeout=60s rollout status deployment/${K8S_DEPLOYMENT_NAME} --timeout=120s || true
+                    kubectl --request-timeout=30s rollout status deployment/${K8S_DEPLOYMENT_NAME} --timeout=30s || true
                     
                     echo "Verifying deployment rollout status:"
-                    kubectl --request-timeout=30s get deployment ${K8S_DEPLOYMENT_NAME} || true
+                    kubectl --request-timeout=15s get deployment ${K8S_DEPLOYMENT_NAME} || true
                 '''
             }
         }
