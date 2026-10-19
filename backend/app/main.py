@@ -14,7 +14,7 @@ Base.metadata.create_all(bind=engine)  # creates specgen.db tables on first run
 app = FastAPI(
     title="SpecGen AI",
     description="AI-assisted platform for generating software requirement specifications.",
-    version="1.0.0",
+    version="2.0.0",
 )
 
 app.add_middleware(
@@ -35,7 +35,7 @@ def health():
     return {
         "status": "ok",
         "app": "SpecGen AI",
-        "version": "1.0.0",
+        "version": "2.0.0",
         "environment": os.environ.get("ENVIRONMENT", "production"),
     }
 
