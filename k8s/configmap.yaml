@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: specgen-config
-  labels:
-    app: specgen-ai
-data:
-  ENVIRONMENT: "production"
-  PORT: "8000"
