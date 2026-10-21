@@ -25,7 +25,7 @@ spec:
       - name: specgen-ai
         # Docker Hub repository
         image: zainuls/specgen-ai:latest
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         ports:
         - containerPort: 8000
           name: http
