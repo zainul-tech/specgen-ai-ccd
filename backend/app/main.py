@@ -35,7 +35,7 @@ def health():
     return {
         "status": "ok",
         "app": "SpecGen AI",
-        "version": "2.0.0",
+        "version": "2.2.0",
         "environment": os.environ.get("ENVIRONMENT", "production"),
     }
 
